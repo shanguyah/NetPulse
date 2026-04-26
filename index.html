@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NetPulse — Router Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Scanline overlay -->
+  <div class="scanlines"></div>
+  <div class="grid-bg"></div>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="logo">
+      <span class="logo-bracket">[</span>
+      <span class="logo-text">NET<span class="accent-green">PULSE</span></span>
+      <span class="logo-bracket">]</span>
+      <span class="logo-sub">// router management system v2.4.1</span>
+    </div>
+    <div class="topbar-right">
+      <span class="status-dot pulse"></span>
+      <span class="status-text accent-green">ONLINE</span>
+      <span class="sep">|</span>
+      <span class="accent-cyan" id="live-time"></span>
+      <span class="sep">|</span>
+      <span class="accent-yellow">192.168.1.1</span>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="dashboard">
+
+    <!-- LEFT: Terminal Log -->
+    <aside class="terminal-panel">
+      <div class="panel-header">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span class="panel-title">root@router:~#</span>
+      </div>
+      <div class="terminal-body" id="terminal-log"></div>
+    </aside>
+
+    <!-- CENTER: Charts -->
+    <section class="center-panel">
+
+      <!-- Row 1: Stat Cards -->
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-label">CONNECTED DEVICES</div>
+          <div class="stat-value accent-green" id="stat-devices">8</div>
+          <div class="stat-sub">▲ 2 from last hour</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">BANDWIDTH USAGE</div>
+          <div class="stat-value accent-cyan" id="stat-bw">247 <span class="stat-unit">Mbps</span></div>
+          <div class="stat-sub">Peak: 412 Mbps today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">TOTAL DATA TODAY</div>
+          <div class="stat-value accent-yellow" id="stat-data">18.4 <span class="stat-unit">GB</span></div>
+          <div class="stat-sub">Monthly: 312 GB / 500 GB</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">UPTIME</div>
+          <div class="stat-value accent-magenta" id="stat-uptime">14d 06h</div>
+          <div class="stat-sub">Last reboot: Apr 12</div>
+        </div>
+      </div>
+
+      <!-- Row 2: Bandwidth + Top Sites -->
+      <div class="chart-row">
+        <div class="chart-box wide">
+          <div class="chart-label">// BANDWIDTH — LAST 24H (Mbps)</div>
+          <canvas id="bandwidthChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-label">// TOP VISITED SITES</div>
+          <canvas id="sitesChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Row 3: Data per User + Protocol -->
+      <div class="chart-row">
+        <div class="chart-box">
+          <div class="chart-label">// DATA PER USER (GB)</div>
+          <canvas id="userDataChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-label">// TRAFFIC PROTOCOL SPLIT</div>
+          <canvas id="protocolChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT: Connected Users -->
+    <aside class="users-panel">
+      <div class="panel-header">
+        <span class="panel-title accent-cyan">CONNECTED USERS</span>
+        <span class="badge accent-green" id="user-count">8 ACTIVE</span>
+      </div>
+      <div class="user-list" id="user-list"></div>
+
+      <div class="panel-header" style="margin-top:18px">
+        <span class="panel-title accent-yellow">BLOCKED THREATS</span>
+        <span class="badge accent-red">TODAY</span>
+      </div>
+      <div class="threat-list" id="threat-list"></div>
+    </aside>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
