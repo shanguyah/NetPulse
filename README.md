@@ -1,21 +1,21 @@
-# 🖥️ NetPulse — Router Management Dashboard
+# 🖥️ NetPulse v3 — Router Management Dashboard
 
-> **A premium dark terminal-aesthetic router dashboard** — monitor your network in real time with live charts, connected device tracking, traffic analysis, and security threat logging.
+> Premium dark terminal-aesthetic router dashboard with **live network topology**, **auto-refresh scanning**, **security audits**, **interactive shell**, and an optional **Python/Scapy backend** for real router monitoring.
 
 ---
 
-## 📸 Features
+## 📸 What's New in v3
 
 | Feature | Description |
 |---|---|
-| 🟢 **Live Device Tracker** | See all connected devices, IPs, MAC addresses, signal strength, and current bandwidth |
-| 📊 **Bandwidth Graph** | 24-hour line chart of Mbps usage across the day |
-| 🌐 **Top Visited Sites** | Horizontal bar chart of most-requested domains on your network |
-| 🍩 **Data Per User** | Doughnut chart showing each device's share of total data |
-| 🔒 **Protocol Split** | HTTPS vs HTTP vs DNS vs Gaming vs Other traffic breakdown |
-| 🛡️ **Threat Log** | Live count of blocked ads, malware, phishing domains, port scans |
-| 💻 **Terminal Log** | Animated Linux-style command output with real typing effect |
-| ⏱️ **Live Clock + Status** | Real-time clock and router online status indicator |
+| 🗂️ **3-Tab Layout** | Dashboard / Topology / Terminal — clean navigation |
+| 🌐 **Topology View** | Visual node tree with parent→child hierarchy, security scores, score bars |
+| 🔒 **Security Audit Panel** | Per-node radial score ring, firmware info, open ports, flag checklist |
+| 💻 **Interactive Terminal** | Full shell with `scan`, `nodes`, `check [ip]`, `block [ip]`, `status`, `threats`, `reboot` |
+| ⟳ **Auto-Refresh** | Countdown timer — re-fetches nodes every 30 seconds automatically |
+| 🐍 **Python Backend** | Flask + Scapy ARP scanner → live `/api/nodes` endpoint |
+| 🔍 **Node Filter** | Search topology by name or IP in real time |
+| 📊 **All Charts Retained** | Bandwidth 24h, Top Sites, Data per User, Protocol Split |
 
 ---
 
@@ -23,117 +23,149 @@
 
 ```
 netpulse/
-├── index.html     ← Main dashboard layout
-├── style.css      ← Premium dark terminal theme + responsive grid
-├── app.js         ← Charts, terminal animation, live updates
-└── README.md      ← You're here
+├── index.html     ← 3-tab dashboard layout
+├── style.css      ← Premium dark terminal theme
+├── app.js         ← Charts, topology, interactive terminal, auto-refresh
+├── nodes.json     ← Static demo data (used when backend is offline)
+├── backend.py     ← Flask + Scapy live scanner API
+└── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start (Demo Mode)
 
-### Option A — Open directly (quickest)
-Just double-click `index.html` in your file manager.  
-Works in any modern browser (Chrome, Firefox, Edge, Safari).
+No backend needed — runs entirely on static data:
 
-### Option B — Local dev server (recommended)
 ```bash
-# Python 3
+# Python
 cd netpulse/
 python3 -m http.server 8080
 # → open http://localhost:8080
 
-# OR using Node.js npx
+# OR Node.js
 npx serve .
 ```
 
-### Option C — VS Code
-Install the **Live Server** extension and click **Go Live** in the bottom bar.
-
 ---
 
-## 🛠️ Tech Stack
+## 🐍 Live Mode — Python Backend
 
-| Tool | Purpose |
+### 1. Install dependencies
+
+```bash
+pip install flask flask-cors scapy
+```
+
+### 2. Run the backend (requires root for ARP scanning)
+
+```bash
+sudo python3 backend.py
+```
+
+This starts a server at `http://127.0.0.1:5000` with these endpoints:
+
+| Endpoint | Description |
 |---|---|
-| HTML5 + CSS3 | Layout, animations, terminal effects |
-| [Chart.js](https://www.chartjs.org/) | All graphs (line, bar, doughnut) |
-| [JetBrains Mono](https://www.jetbrains.com/lp/mono/) | Terminal monospace font |
-| Vanilla JS (ES6+) | No framework needed |
+| `GET /api/nodes` | Scan network and return all nodes as JSON |
+| `GET /api/status` | Router summary (count, avg security, alerts) |
+| `GET /api/threats` | Blocked threats (mock; Pi-hole integration optional) |
+
+### 3. Enable live mode in the frontend
+
+In `app.js`, line 9:
+```js
+const USE_LIVE_API = true;   // ← change false → true
+```
+
+### 4. Run the frontend
+
+```bash
+python3 -m http.server 8080
+```
+
+Open `http://localhost:8080` — the dashboard will now pull **live data** from your actual network.
 
 ---
 
-## ⚙️ Customization
+## 🌐 Pi-hole Integration (Threat Data)
 
-### Change connected devices
-Edit the `USERS` array in `app.js`:
-```js
-const USERS = [
-  { name: 'MyLaptop', ip: '192.168.1.100', mac: 'AA:BB:CC:..', bw: 50, used: 3.2, type: 'WiFi 6', signal: 90 },
-  // ...
-];
-```
+If you run Pi-hole on your network, replace the `/api/threats` mock with:
 
-### Change router IP displayed
-In `index.html`, find:
-```html
-<span class="accent-yellow">192.168.1.1</span>
-```
-Replace with your gateway IP.
+```python
+import requests
 
-### Adjust bandwidth history
-Edit `BW_DATA` in `app.js` (24 hourly Mbps values):
-```js
-const BW_DATA = [18, 12, 8, ..., 247]; // 24 values
+@app.route("/api/threats")
+def api_threats():
+    res  = requests.get("http://pi.hole/api.php?summaryRaw")
+    data = res.json()
+    return jsonify([
+        { "icon": "⛔", "name": "Ads / trackers filtered", "count": data["ads_blocked_today"] },
+        { "icon": "📋", "name": "Queries today",           "count": data["dns_queries_today"] },
+    ])
 ```
-
-### Add more terminal commands
-Push to `TERMINAL_LINES` in `app.js`:
-```js
-{ type: 'cmd',  prompt: 'root@router:~#', text: 'your-command --here' },
-{ type: 'ok',   text: 'Command output here' },
-```
-Types: `cmd` · `ok` · `out` · `warn` · `err` · `info`
 
 ---
 
-## 🌐 Connecting to a Real Router (Advanced)
+## 💻 Interactive Terminal Commands
 
-NetPulse ships with **mock data** for demo purposes.  
-To wire it up to a real router, replace data sources:
+Open the **Terminal** tab and type:
 
-| Data | Source |
+| Command | Description |
 |---|---|
-| Connected devices | `arp -a` or router API (`/cgi-bin/luci`) |
-| Bandwidth stats | `vnstat`, `ifstat`, or SNMP |
-| Top sites | Pi-hole API at `http://pi.hole/api.php` |
-| Threats | Pi-hole or pfSense API |
-
-Example: pull Pi-hole stats and update chart data via `fetch()`:
-```js
-const res  = await fetch('http://pi.hole/api.php?summaryRaw');
-const data = await res.json();
-console.log(data.ads_blocked_today);
-```
+| `help` | Show all available commands |
+| `scan` | Trigger a live network scan |
+| `nodes` | List all discovered nodes with scores |
+| `status` | Show router uptime, WAN IP, bandwidth |
+| `check 192.168.1.x` | Security audit for a specific IP |
+| `block 192.168.1.x` | Apply firewall DROP rule for an IP |
+| `bandwidth` | Current bandwidth and peak usage |
+| `threats` | List all blocked threats today |
+| `uptime` | Router uptime |
+| `clear` | Clear the terminal screen |
+| `reboot confirm` | Reboot the router |
 
 ---
 
-## 🎨 Aesthetic Details
+## ⚙️ Configuration
 
-- **Color palette:** Deep dark navy `#030508` + terminal green `#00ff88`, cyan `#00d4ff`, amber `#ffd000`, magenta `#d94fff`, red `#ff3c5a`
-- **Grid background:** Subtle 40px dot grid with 3% opacity cyan lines
-- **Scanlines overlay:** Classic CRT scanline effect via CSS `repeating-linear-gradient`
-- **Typing animation:** Variable-speed character-by-character with natural jitter
-- **Blinking cursor:** Step-end CSS animation matching real terminal behavior
-- **Charts:** Dark-themed Chart.js with gradient fills and glow accents
+### Change network range (backend)
+In `backend.py`:
+```python
+NETWORK_RANGE    = "192.168.1.0/24"   # your subnet
+GATEWAY_IP       = "192.168.1.1"      # your gateway
+REFRESH_INTERVAL = 25                 # cache TTL in seconds
+```
+
+### Change auto-refresh interval (frontend)
+In `app.js`:
+```js
+const REFRESH_INTERVAL = 30;  // seconds
+```
+
+### Add custom nodes to demo data
+Edit `nodes.json`. Node types: `gateway` · `router` · `switch` · `ap` · `device`
+
+---
+
+## 🎨 Design System
+
+| Token | Value | Usage |
+|---|---|---|
+| `--bg-deep` | `#030508` | Page background |
+| `--green` | `#00ff88` | OK status, commands |
+| `--cyan` | `#00d4ff` | Active elements, bandwidth |
+| `--yellow` | `#ffd000` | Warnings |
+| `--red` | `#ff3c5a` | Errors, threats, low security |
+| `--magenta` | `#d94fff` | Info lines, topology |
+| `--font` | JetBrains Mono | All text |
 
 ---
 
 ## 📄 License
 
-MIT — free to use, modify, and distribute.
+MIT — free to use, fork, and modify.
 
 ---
 
-> Made with 🖤 for network nerds and terminal lovers.
+> Built for network engineers, homelab nerds, and terminal lovers. 🖤

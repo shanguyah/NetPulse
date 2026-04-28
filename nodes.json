@@ -1,0 +1,119 @@
+[
+  {
+    "id": 1,
+    "parent_id": null,
+    "name": "Huawei-HG8245H",
+    "ip": "192.168.1.1",
+    "mac": "A8:C0:D3:11:22:33",
+    "type": "gateway",
+    "status": "online",
+    "security_score": 88,
+    "latency": 2,
+    "firmware": "V3R017C10",
+    "open_ports": [80, 443],
+    "flags": [
+      { "type": "ok",   "text": "Firewall rules active" },
+      { "type": "ok",   "text": "WPA3 encryption enabled" },
+      { "type": "ok",   "text": "Firmware up to date" },
+      { "type": "warn", "text": "Remote management accessible on LAN" }
+    ]
+  },
+  {
+    "id": 2,
+    "parent_id": 1,
+    "name": "Tenda-AC10-Main",
+    "ip": "192.168.1.2",
+    "mac": "C8:3A:35:55:44:33",
+    "type": "router",
+    "status": "online",
+    "security_score": 72,
+    "latency": 5,
+    "firmware": "V15.03.06.09",
+    "open_ports": [80, 8080],
+    "flags": [
+      { "type": "ok",   "text": "Firewall rules active" },
+      { "type": "ok",   "text": "WPA2 encryption enabled" },
+      { "type": "warn", "text": "UPnP is enabled — consider disabling" },
+      { "type": "warn", "text": "Default admin credentials not changed" }
+    ]
+  },
+  {
+    "id": 3,
+    "parent_id": 1,
+    "name": "Tenda-AC10-Ext1",
+    "ip": "192.168.1.3",
+    "mac": "C8:3A:35:66:55:44",
+    "type": "router",
+    "status": "online",
+    "security_score": 58,
+    "latency": 8,
+    "firmware": "V15.03.04.01",
+    "open_ports": [80, 23],
+    "flags": [
+      { "type": "ok",   "text": "Firewall rules active" },
+      { "type": "warn", "text": "Firmware version outdated (>180 days)" },
+      { "type": "warn", "text": "UPnP is enabled — consider disabling" },
+      { "type": "fail", "text": "Open Telnet port detected (23)" }
+    ]
+  },
+  {
+    "id": 4,
+    "parent_id": 2,
+    "name": "Switch-TP-Link-TL-SG108",
+    "ip": "192.168.1.5",
+    "mac": "50:C7:BF:12:AB:CD",
+    "type": "switch",
+    "status": "online",
+    "security_score": 91,
+    "latency": 1,
+    "firmware": "N/A (unmanaged)",
+    "open_ports": [],
+    "flags": [
+      { "type": "ok",   "text": "No open management ports" },
+      { "type": "ok",   "text": "No suspicious traffic detected" },
+      { "type": "ok",   "text": "Hardware in good health" },
+      { "type": "ok",   "text": "Isolated VLAN segment" }
+    ]
+  },
+  {
+    "id": 5,
+    "parent_id": 3,
+    "name": "AP-Ubiquiti-U6-Pro",
+    "ip": "192.168.1.6",
+    "mac": "80:2A:A8:78:9F:CD",
+    "type": "ap",
+    "status": "online",
+    "security_score": 43,
+    "latency": 12,
+    "firmware": "5.43.23.12791",
+    "open_ports": [22, 80, 443],
+    "flags": [
+      { "type": "ok",   "text": "WPA3 encryption enabled" },
+      { "type": "warn", "text": "SSH port 22 accessible from LAN" },
+      { "type": "warn", "text": "Remote management accessible on WAN" },
+      { "type": "fail", "text": "Firmware outdated by 3 major versions" },
+      { "type": "fail", "text": "No intrusion detection configured" }
+    ]
+  },
+  {
+    "id": 6,
+    "parent_id": 1,
+    "name": "Tenda-AC10-Ext2",
+    "ip": "192.168.1.4",
+    "mac": "C8:3A:35:77:66:55",
+    "type": "router",
+    "status": "online",
+    "security_score": 35,
+    "latency": 18,
+    "firmware": "V15.02.01.00",
+    "open_ports": [22, 23, 80, 8080],
+    "flags": [
+      { "type": "warn", "text": "Default admin credentials not changed" },
+      { "type": "warn", "text": "UPnP is enabled — high risk" },
+      { "type": "fail", "text": "Open Telnet port detected (23)" },
+      { "type": "fail", "text": "Open SSH port accessible from WAN (22)" },
+      { "type": "fail", "text": "Firmware outdated (>365 days)" },
+      { "type": "fail", "text": "No firewall rules configured" }
+    ]
+  }
+]
